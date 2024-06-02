@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         WebShuffler
 // @namespace    http://tampermonkey.net/
-// @version      0.2
+// @version      0.2.1
 // @description  Shuffles every text on websites
 // @author       lxvdev
 // @license      MIT
@@ -41,15 +41,11 @@
     }
 
     const observer = new MutationObserver(handleMutations);
+    observer.observe(document.body, { childList: true, subtree: true });
 
     // Starts observing for text changes
     function startObserver() {
         observer.observe(document.body, { childList: true, subtree: true });
-    }
-
-    // Stops observing for text changes
-    function stopObserver() {
-        observer.disconnect();
     }
 
     // Starts observing and shuffles text if the tab gets focused again
@@ -60,12 +56,11 @@
 
     // Stops observing if the tab isn't focused
     window.addEventListener('blur', () => {
-        stopObserver();
+        observer.disconnect();
     });
 
     // Shuffles text on load
     window.onload = function() {
-        startObserver();
         shuffleText(document.body);
     };
 })();
